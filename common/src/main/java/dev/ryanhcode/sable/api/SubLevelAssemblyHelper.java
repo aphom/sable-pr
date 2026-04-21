@@ -86,36 +86,32 @@ public class SubLevelAssemblyHelper {
             pose.orientation().set(containingPose.orientation());
         }
 
-        // Get Create's brittle and wrench_pickup tags if they exist.
-        final TagKey< Block > createBrittleTag = (ResourceLocation.isValidNamespace( "create" )
-                ? TagKey.create(Registries.BLOCK, ResourceLocation.fromNamespaceAndPath("create", "brittle")) : null);
-        final TagKey< Block > createWrenchPickupTag = (ResourceLocation.isValidNamespace( "create" )
-                ? TagKey.create(Registries.BLOCK, ResourceLocation.fromNamespaceAndPath("create", "wrench_pickup")) : null);
+        // Get Create's brittle and wrench_pickup tags.
+        final TagKey< Block > createBrittleTag = TagKey.create(Registries.BLOCK, ResourceLocation.fromNamespaceAndPath("create", "brittle"));
+        final TagKey< Block > createWrenchPickupTag = TagKey.create(Registries.BLOCK, ResourceLocation.fromNamespaceAndPath("create", "wrench_pickup"));
 
-        if (createBrittleTag != null && createWrenchPickupTag != null) {
-            final LevelAccelerator accelerator = new LevelAccelerator(level);
-            final ObjectArrayList< BlockPos > newBlocks = new ObjectArrayList<>();
-            final ObjectArrayList< BlockPos > brittleBlocks = new ObjectArrayList<>();
+        final LevelAccelerator accelerator = new LevelAccelerator(level);
+        final ObjectArrayList< BlockPos > newBlocks = new ObjectArrayList<>();
+        final ObjectArrayList< BlockPos > brittleBlocks = new ObjectArrayList<>();
 
-            // Check if blocks have Create's brittle tag or the wrench_pickup tag for redstone blocks.
-            for (final BlockPos pos : blocks) {
-                final LevelChunk chunk = accelerator.getChunk(SectionPos.blockToSectionCoord(pos.getX()),
-                        SectionPos.blockToSectionCoord(pos.getZ()));
+        // Check if blocks have Create's brittle tag or the wrench_pickup tag for redstone blocks.
+        for (final BlockPos pos : blocks) {
+            final LevelChunk chunk = accelerator.getChunk(SectionPos.blockToSectionCoord(pos.getX()),
+                    SectionPos.blockToSectionCoord(pos.getZ()));
 
-                final BlockState posState = chunk.getBlockState(pos);
-                final Block block = posState.getBlock();
+            final BlockState posState = chunk.getBlockState(pos);
+            final Block block = posState.getBlock();
 
-                // A bit of a dirty way of checking for affected blocks.
-                if (posState.is(createBrittleTag) || posState.is(createWrenchPickupTag)
-                        || block instanceof DiodeBlock || block instanceof TorchBlock || block instanceof SignBlock) { brittleBlocks.add(pos); continue; }
-                newBlocks.add(pos);
-            }
-
-            // Add all brittle blocks in the front of the blocks list so they are processed first.
-            newBlocks.addAll(0, brittleBlocks);
-
-            blocks = newBlocks;
+            // A bit of a dirty way of checking for affected blocks.
+            if (posState.is(createBrittleTag) || posState.is(createWrenchPickupTag)
+                    || block instanceof DiodeBlock || block instanceof TorchBlock || block instanceof SignBlock) { brittleBlocks.add(pos); continue; }
+            newBlocks.add(pos);
         }
+
+        // Add all brittle blocks in the front of the blocks list so they are processed first.
+        newBlocks.addAll(0, brittleBlocks);
+
+        blocks = newBlocks;
 
         final ServerSubLevel subLevel = (ServerSubLevel) container.allocateNewSubLevel(pose);
 
