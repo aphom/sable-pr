@@ -91,8 +91,8 @@ public class SubLevelAssemblyHelper {
         final TagKey< Block > createWrenchPickupTag = TagKey.create(Registries.BLOCK, ResourceLocation.fromNamespaceAndPath("create", "wrench_pickup"));
 
         final LevelAccelerator accelerator = new LevelAccelerator(level);
-        final ObjectArrayList< BlockPos > newBlocks = new ObjectArrayList<>();
-        final ObjectArrayList< BlockPos > brittleBlocks = new ObjectArrayList<>();
+        final ObjectArrayList<BlockPos> newBlocks = new ObjectArrayList<>();
+        final ObjectArrayList<BlockPos> brittleBlocks = new ObjectArrayList<>();
 
         // Check if blocks have Create's brittle tag or the wrench_pickup tag for redstone blocks.
         for (final BlockPos pos : blocks) {
